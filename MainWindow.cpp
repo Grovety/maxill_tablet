@@ -56,7 +56,7 @@ void MainWindow::sendRequestGetWellStatus() {
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
 
     doc.setObject(root);
     const QString reqString{doc.toJson(QJsonDocument::Indented)};
@@ -75,7 +75,7 @@ void MainWindow::sendRequestGetUcidList() {
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
 
     doc.setObject(root);
     const QString reqString{doc.toJson(QJsonDocument::Indented)};
@@ -96,7 +96,7 @@ void MainWindow::sendRequestGetResult(const QString& ucid) {
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
     QJsonObject payload {root["payload"].toObject()};
     payload["ucid"] = ucid;
     root["payload"] = payload;
@@ -119,7 +119,7 @@ void MainWindow::sendRequestGetRawData(const QString& ucid) {
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
     QJsonObject payload {root["payload"].toObject()};
     payload["ucid"] = ucid;
     root["payload"] = payload;
@@ -142,7 +142,7 @@ void MainWindow::sendRequestFlashDataLogger(const QString& label, const QString&
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
     QJsonObject payload {root["payload"].toObject()};
     payload["label"] = label;
 
@@ -180,7 +180,7 @@ void MainWindow::sendRequestSetupDataLogger(
 )")};
 
     QJsonObject root {doc.object()};
-    root["request_id"] = static_cast<int64_t>(++idCntr);
+    root["request_id"] = static_cast<qint64>(++idCntr);
 
     QJsonObject payload {root["payload"].toObject()};
 

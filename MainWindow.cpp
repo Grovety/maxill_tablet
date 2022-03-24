@@ -194,12 +194,12 @@ void MainWindow::sendRequestSetupDataLogger(
     payload["dl_config"] = dlCfgObject;
 
     QJsonObject validationCfgObject {root["payload"].toObject()["validation_config"].toObject()};
-    validationCfgObject["well"] = targetTemp;
-    validationCfgObject["sample_rate"] = targetPress;
-    validationCfgObject["start_temperature"] = criticalTemp;
-    validationCfgObject["start_pressure"] = criticalPress;
-    validationCfgObject["confirmation_period"] = (int)targetTime;
-    validationCfgObject["timestamp"] = (int)deivationPeriod;
+    validationCfgObject["target_temperature"] = targetTemp;
+    validationCfgObject["target_pressure"] = targetPress;
+    validationCfgObject["critical_temperature"] = criticalTemp;
+    validationCfgObject["critical_pressure"] = criticalPress;
+    validationCfgObject["target_time"] = (int)targetTime;
+    validationCfgObject["deviation_period"] = (int)deivationPeriod;
     payload["validation_config"] = validationCfgObject;
 
     root["payload"] = payload;

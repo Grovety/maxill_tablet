@@ -293,7 +293,7 @@ ApplicationWindow {
                     color: parent.pressed ? "greenyellow" : "Lime"
                 }
                 onClicked: {
-                    _backend.sendRequestGetResult(_ucidGetRawData.text)
+                    _backend.sendRequestGetRawData(_ucidGetRawData.text)
                 }
             }
 
@@ -421,12 +421,6 @@ ApplicationWindow {
 
                     }
                 }
-
-//                MyDocument {
-//                    id: document
-//                    source: fileDialog.file
-//                }
-
             }
         }
 
@@ -464,8 +458,8 @@ ApplicationWindow {
                 }
                 onClicked: {
                     _backend.sendRequestSetupDataLogger(
-                        _wellSetupBox.currentText, _samplePeriod.currentValue, _startTemperature.value, _startPressure.realValue, _confirmationPeriod.value, 9223372036854775807,
-                        _targetTemperature.value, _targetPressure.realValue, _criticalTemperature.value, _criticalPressure.realValue, _targetTime.value, _deviationPeriod.value)
+                        _wellSetupBox.currentText, _samplePeriod.currentValue, _startTemperature.value, _startPressure.realValue(), _confirmationPeriod.value, Date.now() / 1000 | 0,
+                        _targetTemperature.value, _targetPressure.realValue(), _criticalTemperature.value, _criticalPressure.realValue(), _targetTime.value, _deviationPeriod.value)
                 }
             }
 

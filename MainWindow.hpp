@@ -27,8 +27,8 @@ class MainWindow : public QObject {
         Q_INVOKABLE void sendRequestGetRawData(const QString& ucid);
         Q_INVOKABLE void sendRequestFlashDataLogger (const QString& label, const QString& filename);
         Q_INVOKABLE void sendRequestSetupDataLogger (
-                const QString& label, const int sampleRate, const float startTemp, const float startPress, const int confirmationPeriod, const int timestamp,
-                const float targetTemp, const float targetPress, const float criticalTemp, const float criticalPress, const int targetTime, const int deivationPeriod);
+                const QString& label, const int sampleRate, const double startTemp, const double startPress, const int confirmationPeriod, const quint64 timestamp,
+                const double targetTemp, const double targetPress, const double criticalTemp, const double criticalPress, const int targetTime, const int deivationPeriod);
     private:
         void updateReplyWaiting(const bool val);
         void updateRequestString(const QString& val);

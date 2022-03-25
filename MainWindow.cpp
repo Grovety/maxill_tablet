@@ -165,8 +165,8 @@ void MainWindow::sendRequestFlashDataLogger(const QString& label, const QString&
     sendRequest(reqString);
 }
 void MainWindow::sendRequestSetupDataLogger(
-    const QString& label, const int sampleRate, const float startTemp, const float startPress, const int confirmationPeriod, const int timestamp,
-    const float targetTemp, const float targetPress, const float criticalTemp, const float criticalPress, const int targetTime, const int deivationPeriod)
+    const QString& label, const int sampleRate, const double startTemp, const double startPress, const int confirmationPeriod, const quint64 timestamp,
+    const double targetTemp, const double targetPress, const double criticalTemp, const double criticalPress, const int targetTime, const int deivationPeriod)
 {
     static QJsonDocument doc{QJsonDocument::fromJson(R"(
 {

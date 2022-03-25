@@ -3,11 +3,15 @@ import QtQuick.Controls 2.15
 
 Item {
     property int decimals: 2
-    property real realValue: 0.0
-    property real realFrom: 0.0
-    property real realTo: 100.0
+    property double realFrom: 0.0
+    property double realTo: 100.0
     property real realStepSize: 1.0
     property bool editable: false
+
+    function realValue() {
+        console.log((spinbox.value/spinbox.factor).toFixed(2))
+        return (spinbox.value/spinbox.factor).toFixed(2)
+    }
 
     SpinBox{
         property real factor: Math.pow(10, decimals)
@@ -15,7 +19,6 @@ Item {
         height: parent.height
         id: spinbox
         stepSize: realStepSize*factor
-        value: realValue*factor
         to : realTo*factor
         from : realFrom*factor
         editable: parent.editable

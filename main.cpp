@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "MainWindow.hpp"
+#include "jsonconverter.h"
 
 int main(int argc, char *argv[])
 {

@@ -4,8 +4,10 @@
 #include <QSize>
 #include <QFile>
 #include <QtSerialPort/QtSerialPort>
+#include "jsonconverter.h"
 
 #define BAUDRATE    QSerialPort::Baud115200
+#define USE_MSG_PACK    0
 
 
 MainWindow::MainWindow(QObject *parent)
@@ -209,6 +211,8 @@ void MainWindow::sendRequestSetupDataLogger(
 
     sendRequest(reqString);
 }
+#include "msgpack11.hpp"
+using namespace msgpack11;
 
 void MainWindow::sendRequest(const QString& request) {
 
@@ -239,11 +243,33 @@ void MainWindow::sendRequest(const QString& request) {
         waitLoop.exec();
         const auto replySize{_port->bytesAvailable()};
         qDebug() << "reply size: " << replySize;
-        std::unique_ptr<char> replyBuffer {new char[replySize + 1] {}};
-        _port->read(replyBuffer.get(), replySize);
-        const QString reply {replyBuffer.get()};
-        qDebug() << "reply received: " << reply;
-        updateResponseString(reply);
+
+        std::vector<char> buffer;
+        buffer.resize(replySize + 1);
+
+        _port->read(const_cast<char*>(buffer.data()), replySize);
+
+#if(USE_MSG_PACK == 1)
+        for(size_t i{}; i < replySize; i++) {
+            qDebug() << QString::number((quint8)buffer[i], 16);
+        }
+
+        std::string stdString{buffer.begin(), buffer.end()};
+        std::string err;
+        msgpack11::MsgPack deserialized{msgpack11::MsgPack::parse(stdString, err)};
+
+        qDebug() << "deserializeed type: " << deserialized.type();
+        qDebug() << "deserializeed size: " << deserialized.object_items().size();
+        qDebug() << "error: " << QString::fromStdString(err);
+        JsonConverter converter;
+        const auto jsonDoc{converter.fromMsgPack(deserialized)};
+        const QString jsonString{jsonDoc.toJson(QJsonDocument::Indented)};
+        qDebug() << "json: " << jsonString;
+#else
+        const QString jsonString{buffer.data()};
+#endif
+
+        updateResponseString(jsonString);
     }
     updateReplyWaiting(false);
 }

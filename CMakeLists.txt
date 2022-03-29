@@ -14,16 +14,21 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick SerialPort REQUIRED)
 
-file(GLOB_RECURSE SOURCES  *.cpp *.c)
+file(GLOB_RECURSE SOURCES  *.cpp *.c /msgpack11/*.cpp)
 set(PROJECT_SOURCES
         ${SOURCES}
         qml.qrc
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Maxill_tablet
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+    )
+    qt_add_executable(msgpack
+        MANUAL_FINALIZATION
+        msgpack11/
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Maxill_tablet APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -56,7 +61,12 @@ set_target_properties(Maxill_tablet PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+include_directories(../msgpack11)
+add_library(msgpack11 STATIC IMPORTED)
+
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(Maxill_tablet)
     qt_finalize_executable(Maxill_tablet)
 endif()
+
+

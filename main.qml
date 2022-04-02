@@ -66,17 +66,10 @@ ApplicationWindow {
 
         horizontalScrollBar: ScrollBar {
             policy: ScrollBar.AsNeeded
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            contentItem: Rectangle {
-                implicitHeight: 6
-                color: "black"
-                radius: 5
-            }
         }
 
         verticalScrollBar: ScrollBar {
-            policy: ScrollBar.AlwaysOff
+            policy: ScrollBar.AsNeeded
         }
     }
 
@@ -99,16 +92,10 @@ ApplicationWindow {
 
         horizontalScrollBar: ScrollBar {
             policy: ScrollBar.AsNeeded
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            contentItem: Rectangle {
-                implicitHeight: 6
-                color: "black"
-                radius: 5
-            }
         }
+
         verticalScrollBar: ScrollBar {
-            policy: ScrollBar.AlwaysOff
+            policy: ScrollBar.AsNeeded
         }
     }
 

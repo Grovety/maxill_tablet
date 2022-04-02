@@ -229,26 +229,28 @@ void MainWindow::sendRequest(const QString& request) {
         updateReplyWaiting(true);
         updateRequestString(request);
     }
-    timer.start(5000);
+    timer.start(60000);
     waitBytesLoop.exec();
+
+    std::vector<char> replyBuffer;
 
     if (!_port->bytesAvailable()) {
         qDebug() << "reply timeout!";
     }
     else {
+        while(_port->bytesAvailable()) {
+            const auto replySize{_port->bytesAvailable()};
+            std::unique_ptr<char[]> buffer{new char[replySize]{}};
+            _port->read(buffer.get(), replySize);
+            replyBuffer.insert(replyBuffer.end(), buffer.get(), buffer.get() + replySize);
+            QEventLoop waitLoop;
+            QObject::connect(&timer, SIGNAL(timeout()), &waitLoop, SLOT(quit()));
+            timer.start(500);
+            waitLoop.exec();
+        }
+        replyBuffer.push_back('\0');
         qDebug() << "reply received!";
-        QEventLoop waitLoop;
-        QObject::connect(&timer, SIGNAL(timeout()), &waitLoop, SLOT(quit()));
-        timer.start(500);
-        waitLoop.exec();
-        const auto replySize{_port->bytesAvailable()};
-        qDebug() << "reply size: " << replySize;
-
-        std::vector<char> buffer;
-        buffer.resize(replySize + 1);
-
-        _port->read(const_cast<char*>(buffer.data()), replySize);
-
+    }
 #if(USE_MSG_PACK == 1)
         for(size_t i{}; i < replySize; i++) {
             qDebug() << QString::number((quint8)buffer[i], 16);
@@ -266,11 +268,12 @@ void MainWindow::sendRequest(const QString& request) {
         const QString jsonString{jsonDoc.toJson(QJsonDocument::Indented)};
         qDebug() << "json: " << jsonString;
 #else
-        const QString jsonString{buffer.data()};
+
 #endif
 
-        updateResponseString(jsonString);
-    }
+    const QString jsonString{replyBuffer.data()};
+    updateResponseString(jsonString);
+
     updateReplyWaiting(false);
 }
 

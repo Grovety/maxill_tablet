@@ -5,8 +5,11 @@ import MainWindow 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
 import "my_components" as MyComponents
+import QtCharts 2.3
 
 ApplicationWindow {
+
+    id: root
     visible: true
     title: qsTr("Maxill Tablet app")
 
@@ -53,7 +56,7 @@ ApplicationWindow {
             top: _requestLabel.bottom
             topMargin: 25
             bottom: parent.bottom
-            bottomMargin: 10
+            bottomMargin: 55
             right: _responseField.left
             rightMargin: 10
         }
@@ -79,7 +82,7 @@ ApplicationWindow {
             top: _responseLabel.bottom
             topMargin: 25
             bottom: parent.bottom
-            bottomMargin: 10
+            bottomMargin: 55
             right: parent.right
             rightMargin: 10
         }
@@ -96,6 +99,107 @@ ApplicationWindow {
 
         verticalScrollBar: ScrollBar {
             policy: ScrollBar.AsNeeded
+        }
+    }
+
+    Row {
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10;
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        spacing: 25
+        Button {
+            id: _plotButton
+            text: "plot chart"
+            onClicked: {
+                plotFileDialog.open()
+            }
+        }
+
+        Button {
+            id: _saveButton
+            text: "save response"
+            onClicked: {
+                saveFileDialog.open()
+            }
+        }
+    }
+
+    function saveFile(fileUrl, text) {
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    function openFile(fileUrl) {
+        var request = new XMLHttpRequest();
+        request.open("GET", fileUrl, false);
+        request.send(null);
+        return request.responseText;
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        selectExisting: false
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted: saveFile(saveFileDialog.fileUrl, _responseField.text)
+    }
+
+    FileDialog {
+        id: plotFileDialog
+        selectExisting: true
+        nameFilters: ["Text files (*.txt)", "All files (*)"]
+        onAccepted:  {
+            var jsonString = openFile(fileUrl)
+            console.log(jsonString)
+
+            _temperatureSeries.clear()
+            _pressureSeries.clear()
+            _targetTSeries.clear()
+            _criticalTSeries.clear()
+            _targetPSeries.clear()
+            _criticalPSeries.clear()
+
+            var root = JSON.parse(jsonString);
+            var recordsArray = root.payload.records
+            var config = root.payload.validation_config
+            var maxT = config.target_t;
+            var maxP = config.target_p;
+            var counter = 0.0;
+            for (var record in recordsArray) {
+                _temperatureSeries.append(counter, recordsArray[record].temperature)
+                _pressureSeries.append(counter, recordsArray[record].pressure)
+                if(recordsArray[record].temperature > maxT)
+                    maxT = recordsArray[record].temperature
+                if(recordsArray[record].pressure > maxP)
+                    maxP = recordsArray[record].pressure
+                counter += 1.0
+            }
+
+            axisXT.maxX = counter;
+            axisXT.max = counter;
+
+            axisYT.max = maxT*1.1
+            axisYP.max = maxP*1.1
+
+            _targetTSeries.append(0, config.target_t)
+            _targetTSeries.append(axisXT.max, config.target_t)
+
+            _criticalTSeries.append(0, config.critical_temp)
+            _criticalTSeries.append(axisXT.max, config.critical_temp)
+
+            _targetPSeries.append(0, config.target_p)
+            _targetPSeries.append(axisXT.max, config.target_p)
+
+            _criticalPSeries.append(0, config.critical_press)
+            _criticalPSeries.append(axisXP.max, config.critical_press)
+
+            axisYT.applyNiceNumbers()
+            axisYP.applyNiceNumbers()
+
+            _plotDiaolog.open()
+
         }
     }
 
@@ -682,6 +786,132 @@ ApplicationWindow {
             enabled: !_backend.connected
             onClicked: {
                 _backend.connect(_comPortsList.currentText)
+            }
+        }
+    }
+
+    Popup {
+        id: _plotDiaolog
+        width: root.width*0.9
+        height: root.height*0.9
+        x: (root.width - width)/2
+        y: (root.height-height)/2
+        modal:true
+        focus:true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: {
+                console.log("onDoubleClicked")
+                axisXT.max = xisXT.maxX
+            }
+            onWheel: {
+                var offset = wheel.angleDelta.y / 120 * axisXT.maxX * 0.025
+                axisXT.max = (axisXT.max - offset) > 100 ? (axisXT.max - offset) : 100
+            }
+        }
+
+        Column {
+            id: _plots
+            spacing: 10
+            x: (parent.width-implicitWidth)/2
+            y: (parent.height-implicitHeight)/2
+
+            ChartView {
+                id: _temperaturePlot
+
+                width: _plotDiaolog.width * 0.85
+                height: _plotDiaolog.height * 0.48
+                anchors.horizontalCenter: parent.horizontalCenter
+                antialiasing: true
+
+                ValueAxis {
+                    property int maxX: 0
+                    id: axisXT
+                    min: 0.0
+                    max: 0
+                    tickCount: 5
+                }
+
+                ValueAxis {
+                    id: axisYT
+                    min: 0.0
+                    max: 150.0
+                    minorTickCount: 4
+                }
+
+                LineSeries {
+                    id: _temperatureSeries
+                    name: "Temperature"
+                    axisX: axisXT
+                    axisY: axisYT
+                    pointsVisible: true
+                }
+
+                LineSeries {
+                    id: _targetTSeries
+                    name: "Target"
+                    axisX: axisXT
+                    axisY: axisYT
+                    color: "yellow"
+                    width: 2
+                }
+
+                LineSeries {
+                    id: _criticalTSeries
+                    name: "Critical"
+                    axisX: axisXT
+                    axisY: axisYT
+                    color: "red"
+                    width: 2
+                }
+
+            }
+
+            ChartView {
+                id: _pressurePlot
+                width: _plotDiaolog.width * 0.85
+                height: _plotDiaolog.height * 0.48
+
+                ValueAxis {
+                    id: axisXP
+                    min: 0.0
+                    max: axisXT.max
+                    tickCount: 5
+                }
+
+                ValueAxis {
+                    id: axisYP
+                    min: 0.0
+                    max: 2.0
+                }
+
+                LineSeries {
+                    id: _pressureSeries
+                    name: "Pressure"
+                    axisX: axisXP
+                    axisY: axisYP
+
+                }
+
+                LineSeries {
+                    id: _targetPSeries
+                    name: "Target"
+                    axisX: axisXP
+                    axisY: axisYP
+                    color: "yellow"
+                    width: 2
+                }
+
+                LineSeries {
+                    id: _criticalPSeries
+                    name: "Critical"
+                    axisX: axisXP
+                    axisY: axisYP
+                    color: "red"
+                    width: 2
+                }
             }
         }
     }

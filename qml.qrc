@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>my_components/DoubleSpinBox.qml</file>
         <file>my_components/FlickableText.qml</file>
+        <file>images/plot.png</file>
     </qresource>
 </RCC>

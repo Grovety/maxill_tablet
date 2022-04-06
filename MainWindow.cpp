@@ -132,6 +132,22 @@ void MainWindow::sendRequestGetRawData(const QString& ucid) {
     sendRequest(reqString);
 }
 
+void MainWindow::loadPlotDataFromFile(const QString& filename) {
+    QFile file(filename);
+    if(!file.open(QFile::ReadOnly)) {
+        qDebug() << "failed to open file!";
+    }
+    else {
+        QByteArray content {file.readAll()};
+        //const QString jsonString {QString::fromLocal8Bit(content)};
+
+        QJsonDocument doc{QJsonDocument::fromJson(content)};
+        QJsonObject root {doc.object()};
+
+
+    }
+}
+
 void MainWindow::sendRequestFlashDataLogger(const QString& label, const QString& filename) {
 
     qDebug() << "flashing with file: " << filename;

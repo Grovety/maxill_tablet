@@ -243,10 +243,11 @@ ApplicationWindow {
                 height: 40
                 text: "send"
                 font.pointSize: 15
+                enabled: !_backend.replyWaiting
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestGetWellStatus();
@@ -278,10 +279,11 @@ ApplicationWindow {
                 height: 40
                 text: "send"
                 font.pointSize: 15
+                enabled: !_backend.replyWaiting
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestGetUcidList();
@@ -315,11 +317,12 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 text: "send"
+                enabled: !_backend.replyWaiting
                 font.pointSize: 15
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestGetResult(_ucidGetResult.text)
@@ -377,11 +380,12 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 text: "send"
+                enabled: !_backend.replyWaiting
                 font.pointSize: 15
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestGetRawData(_ucidGetRawData.text)
@@ -439,11 +443,12 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 text: "send"
+                enabled: !_backend.replyWaiting
                 font.pointSize: 15
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestFlashDataLogger(_wellComboBox.currentText, _fileNameLabel.text)
@@ -541,11 +546,12 @@ ApplicationWindow {
                 width: 150
                 height: 40
                 text: "send"
+                enabled: !_backend.replyWaiting
                 font.pointSize: 15
                 background: Rectangle {
                     anchors.fill: parent
                     radius: 5
-                    color: parent.pressed ? "greenyellow" : "Lime"
+                    color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
                 }
                 onClicked: {
                     _backend.sendRequestSetupDataLogger(
@@ -599,7 +605,7 @@ ApplicationWindow {
                     SpinBox {
                         id: _startTemperature
                         Layout.preferredHeight: 30
-                        from: 50
+                        from: 20
                         to: 135
                         editable: false
                     }
@@ -656,7 +662,7 @@ ApplicationWindow {
                     SpinBox {
                         id: _targetTemperature
                         Layout.preferredHeight: 30
-                        from: 50
+                        from: 20
                         to: 135
                         editable: false
                     }
@@ -688,7 +694,7 @@ ApplicationWindow {
                     SpinBox {
                         id: _criticalTemperature
                         Layout.preferredHeight: 30
-                        from: 50
+                        from: 20
                         to: 135
                         editable: false
                     }

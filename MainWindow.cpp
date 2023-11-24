@@ -14,7 +14,8 @@ MainWindow::MainWindow(QObject *parent)
     :   QObject(parent),
         _engine(nullptr),
         _port{new QSerialPort()},
-        _connected{} {
+        _connected{}
+{
 
     _port->setBaudRate(BAUDRATE);
     _port->setDataBits(QSerialPort::DataBits::Data8);
@@ -23,11 +24,13 @@ MainWindow::MainWindow(QObject *parent)
     _port->setFlowControl(QSerialPort::NoFlowControl);
 }
 
-QStringList MainWindow::comPorts() const {
+QStringList MainWindow::comPorts() const
+{
     return _comPorts;
 }
 
-void MainWindow::refreshComPorts() {
+void MainWindow::refreshComPorts()
+{
     _comPorts.clear();
     qDebug() << "refreshing availabale com ports..";
     auto const portList {QSerialPortInfo::availablePorts()};
@@ -38,17 +41,20 @@ void MainWindow::refreshComPorts() {
     emit comPortsChanged();
 }
 
-void MainWindow::setComPorts(const QStringList value) {
+void MainWindow::setComPorts(const QStringList value)
+{
     _comPorts = value;
 }
 
-Q_INVOKABLE void MainWindow::connect(const QString& com) {
+Q_INVOKABLE void MainWindow::connect(const QString &com)
+{
     _port->setPortName(com);
     connectToPort();
 }
 
 
-void MainWindow::sendRequestGetWellStatus() {
+void MainWindow::sendRequestGetWellStatus()
+{
     static QJsonDocument doc{QJsonDocument::fromJson(R"(
 {
     "command": "get_well_status",
@@ -65,6 +71,26 @@ void MainWindow::sendRequestGetWellStatus() {
 
     sendRequest(reqString);
 }
+
+void MainWindow::sendRequestGetFwVersion() {
+	static QJsonDocument doc{QJsonDocument::fromJson(R"(
+{
+	"command": "get_fw_version",
+	"request_id": 1,
+	"payload": {}
+}
+)")};
+
+	QJsonObject root {doc.object()};
+	root["request_id"] = static_cast<qint64>(++idCntr);
+
+	doc.setObject(root);
+	const QString reqString{doc.toJson(QJsonDocument::Indented)};
+
+	sendRequest(reqString);
+}
+
+
 
 void MainWindow::sendRequestGetUcidList() {
 

@@ -11,7 +11,7 @@ ApplicationWindow {
 
     id: root
     visible: true
-    title: qsTr("Maxill Tablet app")
+	title: qsTr("Maxill Tablet app V2.1")
 
     minimumHeight: 900
     minimumWidth: 1500
@@ -219,10 +219,46 @@ ApplicationWindow {
         anchors.leftMargin: 15
         width: 700
 
+		Rectangle {
+			border.width: 1
+			border.color:  "black"
+			Layout.preferredHeight: 60
+			Layout.fillWidth: true
+			Layout.alignment: Qt.AlignLeft
+			color: "honeydew"
+			radius: 5
+			Label {
+				anchors.left: parent.left
+				anchors.leftMargin: 15
+				anchors.verticalCenter: parent.verticalCenter
+				text: "Get fw version"
+				font.pointSize: 20
+			}
+
+			Button {
+				anchors.right: parent.right
+				anchors.rightMargin: 15
+				anchors.verticalCenter: parent.verticalCenter
+				width: 150
+				height: 40
+				text: "send"
+				font.pointSize: 15
+				enabled: !_backend.replyWaiting
+				background: Rectangle {
+					anchors.fill: parent
+					radius: 5
+					color: enabled ? (parent.pressed ? "greenyellow" : "Lime") : "gainsboro"
+				}
+				onClicked: {
+					_backend.sendRequestGetFwVersion();
+				}
+			}
+		}
+
         Rectangle {
             border.width: 1
             border.color:  "black"
-            Layout.preferredHeight: 70
+			Layout.preferredHeight: 60
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
             color: "honeydew"
@@ -258,7 +294,7 @@ ApplicationWindow {
         Rectangle {
             border.width: 1
             border.color:  "black"
-            Layout.preferredHeight: 70
+			Layout.preferredHeight: 60
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
             color: "honeydew"
@@ -294,7 +330,7 @@ ApplicationWindow {
         Rectangle {
             border.width: 1
             border.color:  "black"
-            Layout.preferredHeight: 130
+			Layout.preferredHeight: 110
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
             color: "honeydew"
@@ -357,7 +393,7 @@ ApplicationWindow {
         Rectangle {
             border.width: 1
             border.color:  "black"
-            Layout.preferredHeight: 130
+			Layout.preferredHeight: 110
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
             color: "honeydew"
@@ -420,7 +456,7 @@ ApplicationWindow {
         Rectangle {
             border.width: 1
             border.color:  "black"
-            Layout.preferredHeight: 130
+			Layout.preferredHeight: 110
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
             color: "honeydew"
